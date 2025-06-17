@@ -8,6 +8,13 @@ const minioClient = new Client({
   secretKey: process.env.MINIO_ROOT_PASSWORD || "miniosecret",
 });
 
+// Bucket names from environment variables
+const BUCKETS = {
+  PROFILE_IMAGES: process.env.MINIO_PROFILE_BUCKET || "ignite-profile-images",
+  COURSE_THUMBNAILS: process.env.MINIO_THUMBNAIL_BUCKET || "ignite-thumbnails",
+  COURSE_CONTENT: process.env.MINIO_CONTENT_BUCKET || "ignite-content",
+};
+
 // Allowed image types
 const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
@@ -20,10 +27,10 @@ const ALLOWED_IMAGE_TYPES = [
 const URL_EXPIRATION = 7 * 24 * 60 * 60;
 
 // Generate a pre-signed URL
-async function generatePresignedUrl(fileName: string) {
+async function generatePresignedUrl(bucketName: string, fileName: string) {
   try {
     return await minioClient.presignedGetObject(
-      "ignite-uploads",
+      bucketName,
       fileName,
       URL_EXPIRATION
     );
@@ -33,7 +40,12 @@ async function generatePresignedUrl(fileName: string) {
 }
 
 // Upload a file
-async function uploadFile(file: Buffer, fileName: string, mimeType: string) {
+async function uploadFile(
+  file: Buffer,
+  fileName: string,
+  mimeType: string,
+  bucketName: string
+) {
   try {
     // Validate file type
     if (!ALLOWED_IMAGE_TYPES.includes(mimeType)) {
@@ -46,10 +58,10 @@ async function uploadFile(file: Buffer, fileName: string, mimeType: string) {
     const uniqueFileName = `${Date.now()}-${fileName}`;
 
     // Upload to MinIO
-    await minioClient.putObject("ignite-uploads", uniqueFileName, file);
+    await minioClient.putObject(bucketName, uniqueFileName, file);
 
     // Generate pre-signed URL
-    const url = await generatePresignedUrl(uniqueFileName);
+    const url = await generatePresignedUrl(bucketName, uniqueFileName);
 
     // Return the public URL
     return {
@@ -63,15 +75,18 @@ async function uploadFile(file: Buffer, fileName: string, mimeType: string) {
 }
 
 // Refresh URL if expired
-async function refreshUrlIfNeeded(avatar: {
-  public_id: string;
-  url: string;
-  expires_at?: number;
-}) {
+async function refreshUrlIfNeeded(
+  avatar: {
+    public_id: string;
+    url: string;
+    expires_at?: number;
+  },
+  bucketName: string
+) {
   try {
     // If no expiration time or URL is expired (with 5 minutes buffer)
     if (!avatar.expires_at || avatar.expires_at < Date.now() + 5 * 60 * 1000) {
-      const newUrl = await generatePresignedUrl(avatar.public_id);
+      const newUrl = await generatePresignedUrl(bucketName, avatar.public_id);
       return {
         ...avatar,
         url: newUrl,
@@ -85,12 +100,12 @@ async function refreshUrlIfNeeded(avatar: {
 }
 
 // Delete a file
-async function deleteFile(fileName: string) {
+async function deleteFile(fileName: string, bucketName: string) {
   try {
-    await minioClient.removeObject("ignite-uploads", fileName);
+    await minioClient.removeObject(bucketName, fileName);
   } catch (error: any) {
     throw new Error(`Failed to delete file: ${error.message}`);
   }
 }
 
-export { uploadFile, deleteFile, refreshUrlIfNeeded };
+export { uploadFile, deleteFile, refreshUrlIfNeeded, BUCKETS };

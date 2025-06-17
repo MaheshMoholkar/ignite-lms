@@ -9,7 +9,12 @@ import { generateRandomActivationCode } from "../utils/security";
 import sendMail from "../utils/mail";
 import redis from "../utils/redis";
 import { getUserById } from "../services/user.service";
-import { uploadFile, deleteFile, refreshUrlIfNeeded } from "../utils/minio";
+import {
+  uploadFile,
+  deleteFile,
+  refreshUrlIfNeeded,
+  BUCKETS,
+} from "../utils/minio";
 require("dotenv").config();
 
 // register user
@@ -61,7 +66,8 @@ export const registerUser = CatchAsyncError(
           avatarData = await uploadFile(
             req.file.buffer,
             req.file.originalname,
-            req.file.mimetype
+            req.file.mimetype,
+            BUCKETS.PROFILE_IMAGES
           );
         } catch (error: any) {
           return next(new ErrorHandler(error.message, 400));
@@ -128,7 +134,7 @@ export const registerUser = CatchAsyncError(
         // If email sending fails, delete the created user and uploaded avatar
         await userModel.findOneAndDelete({ email });
         if (avatarData?.public_id) {
-          await deleteFile(avatarData.public_id);
+          await deleteFile(avatarData.public_id, BUCKETS.PROFILE_IMAGES);
         }
         return next(new ErrorHandler("Failed to send activation email", 500));
       }
@@ -382,10 +388,13 @@ export const getUserDetails = CatchAsyncError(
 
       // Refresh avatar URL if needed
       if (user.avatar) {
-        const refreshedAvatar = await refreshUrlIfNeeded({
-          public_id: user.avatar.public_id,
-          url: user.avatar.url,
-        });
+        const refreshedAvatar = await refreshUrlIfNeeded(
+          {
+            public_id: user.avatar.public_id,
+            url: user.avatar.url,
+          },
+          BUCKETS.PROFILE_IMAGES
+        );
         user.avatar = refreshedAvatar;
       }
 
@@ -479,14 +488,15 @@ export const updateUserDetails = CatchAsyncError(
         try {
           // Delete old avatar if exists
           if (user.avatar?.public_id) {
-            await deleteFile(user.avatar.public_id);
+            await deleteFile(user.avatar.public_id, BUCKETS.PROFILE_IMAGES);
           }
 
           // Upload new avatar
           avatar = await uploadFile(
             req.file.buffer,
             req.file.originalname,
-            req.file.mimetype
+            req.file.mimetype,
+            BUCKETS.PROFILE_IMAGES
           );
           user.avatar = avatar;
         } catch (error: any) {
