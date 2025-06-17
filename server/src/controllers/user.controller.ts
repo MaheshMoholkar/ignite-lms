@@ -381,7 +381,6 @@ export const getUserDetails = CatchAsyncError(
         return next(new ErrorHandler("User not found", 404));
       }
 
-      // No need to refresh avatar URL as it's public
       await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
 
       res.status(200).json({

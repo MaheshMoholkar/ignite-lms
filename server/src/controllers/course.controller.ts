@@ -4,6 +4,7 @@ import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import ErrorHandler from "../helpers/ErrorHandler";
 import { uploadFile, BUCKETS, deleteFile } from "../utils/minio";
 import { createCourse } from "../services/course.service";
+import redisClient from "../utils/redis";
 
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -145,6 +146,115 @@ export const editCourse = CatchAsyncError(
       res.status(200).json({
         success: true,
         course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const getSingleCourse = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courseId = req.params.id;
+
+      // Validate course ID
+      if (!courseId) {
+        return next(new ErrorHandler("Course ID is required", 400));
+      }
+
+      const cache = await redisClient.get(courseId);
+
+      if (cache) {
+        res.status(200).json({
+          success: true,
+          course: JSON.parse(cache),
+        });
+      } else {
+        const course = await courseModel
+          .findById(courseId)
+          .select(
+            "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+          );
+
+        await redisClient.set(courseId, JSON.stringify(course), "EX", 84000);
+
+        res.status(200).json({
+          success: true,
+          course,
+        });
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const getAllCourses = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const cache = await redisClient.get("all-courses");
+
+      if (cache) {
+        res.status(200).json({
+          success: true,
+          courses: JSON.parse(cache),
+        });
+      } else {
+        const courses = await courseModel
+          .find()
+          .select(
+            "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+          );
+
+        await redisClient.set(
+          "all-courses",
+          JSON.stringify(courses),
+          "EX",
+          84000
+        );
+
+        res.status(200).json({
+          success: true,
+          courses,
+        });
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const getCourseByUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courses = req.user.courses;
+      const courseId = req.params.id;
+
+      // Validate course ID
+      if (!courseId) {
+        return next(new ErrorHandler("Course ID is required", 400));
+      }
+
+      if (courses.length === 0) {
+        return next(new ErrorHandler("You have not purchased any course", 404));
+      }
+
+      const course = courses.find(
+        (course: any) => course.courseId.toString() == courseId
+      );
+
+      if (!course) {
+        return next(
+          new ErrorHandler("You have not purchased this course", 404)
+        );
+      }
+
+      const courseData = await courseModel.findById(courseId);
+
+      res.status(200).json({
+        success: true,
+        courseData,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
