@@ -9,12 +9,7 @@ import { generateRandomActivationCode } from "../utils/security";
 import sendMail from "../utils/mail";
 import redis from "../utils/redis";
 import { getUserById } from "../services/user.service";
-import {
-  uploadFile,
-  deleteFile,
-  refreshUrlIfNeeded,
-  BUCKETS,
-} from "../utils/minio";
+import { uploadFile, deleteFile, BUCKETS } from "../utils/minio";
 require("dotenv").config();
 
 // register user
@@ -386,18 +381,7 @@ export const getUserDetails = CatchAsyncError(
         return next(new ErrorHandler("User not found", 404));
       }
 
-      // Refresh avatar URL if needed
-      if (user.avatar) {
-        const refreshedAvatar = await refreshUrlIfNeeded(
-          {
-            public_id: user.avatar.public_id,
-            url: user.avatar.url,
-          },
-          BUCKETS.PROFILE_IMAGES
-        );
-        user.avatar = refreshedAvatar;
-      }
-
+      // No need to refresh avatar URL as it's public
       await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
 
       res.status(200).json({
