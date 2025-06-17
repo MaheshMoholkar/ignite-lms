@@ -13,11 +13,3 @@ export const getUserById = async (id: string): Promise<IUser | null> => {
   }
   return JSON.parse(userJson) as IUser;
 };
-
-export const updateUserById = async (id: string, data: any, res: Response) => {
-  const user = await userModel.findByIdAndUpdate(id, data, { new: true });
-  res.status(201).json({
-    success: true,
-    user,
-  });
-};
