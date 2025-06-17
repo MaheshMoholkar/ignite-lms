@@ -447,7 +447,7 @@ export const updateUserDetails = CatchAsyncError(
         return next(new ErrorHandler("User not found", 404));
       }
 
-      const { name, email } = req.body as IUpdateUserDetails;
+      const { name, email } = req.body || {};
       let avatar;
 
       // Validate email if provided
