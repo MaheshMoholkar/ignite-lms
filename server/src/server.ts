@@ -1,6 +1,6 @@
 import { app } from "./app";
-import connectDB from "./src/utils/db";
-import setupMinioBuckets from "./src/utils/setupMinio";
+import connectDB from "./utils/db";
+import setupMinioBuckets from "./utils/setupMinio";
 require("dotenv").config();
 
 const startServer = async () => {

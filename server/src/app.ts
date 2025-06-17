@@ -3,9 +3,9 @@ export const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
 require("dotenv").config();
-import { ErrorMiddleware } from "./src/middlewares/error";
-import userRouter from "./src/routes/user.route";
-import courseRouter from "./src/routes/course.route";
+import { ErrorMiddleware } from "./middlewares/error";
+import userRouter from "./routes/user.route";
+import courseRouter from "./routes/course.route";
 
 // json parser
 app.use(express.json({ limit: "50mb" }));

@@ -1,12 +1,35 @@
 services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: ignite_server
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=465
+      - SMTP_SERVICE=gmail
+      - SMTP_MAIL=maheshmoholkar171@gmail.com
+      - SMTP_PASSWORD=yrdagnxvtmqtljwe
+    env_file:
+      - ./server/.env
+    depends_on:
+      - mongodb
+      - redis
+      - minio
+    networks:
+      - ignite_network
+
   mongodb:
     image: mongo:latest
     container_name: ignite_mongodb
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=mongosecret
     volumes:
       - mongodb_data:/data/db
     networks:
@@ -29,8 +52,8 @@ services:
       - "9000:9000" # API
       - "9001:9001" # Console
     environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=miniosecret
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
