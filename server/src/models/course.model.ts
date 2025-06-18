@@ -2,10 +2,10 @@ import mongoose, { Document, Schema } from "mongoose";
 import { IUser } from "./user.model";
 
 interface IReview extends Document {
-  user: object;
+  user: IUser;
   rating: number;
   comment: string;
-  commentReplies: IComment[];
+  commentReplies?: IComment[];
 }
 
 interface IComment extends Document {

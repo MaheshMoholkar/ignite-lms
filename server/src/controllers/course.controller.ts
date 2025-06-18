@@ -399,3 +399,93 @@ export const addAnswer = CatchAsyncError(
     }
   }
 );
+
+interface IAddReview {
+  courseId: string;
+  rating: number;
+  review: string;
+}
+
+export const addReview = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { courseId, rating, review } = req.body as IAddReview;
+
+      const courses = req.user.courses;
+
+      const courseExists = courses.find(
+        (course: any) => course.courseId.toString() === courseId
+      );
+
+      if (!courseExists) {
+        return next(
+          new ErrorHandler("You have not purchased this course", 404)
+        );
+      }
+
+      const reviewObject: any = {
+        user: req.user,
+        rating,
+        comment: review,
+      };
+
+      const course = await courseModel.findById(courseId);
+
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      course.reviews.push(reviewObject);
+
+      let averageRating =
+        course.reviews.reduce(
+          (acc: number, item: any) => acc + item.rating,
+          0
+        ) / course.reviews.length;
+      averageRating = Math.round(averageRating * 10) / 10;
+
+      course.ratings = averageRating;
+
+      await course.save();
+
+      const notification = {
+        title: "New Review",
+        message: `You have a new review in ${course.name}`,
+      };
+
+      // if (req.user._id !== course.user._id) {
+      //   //TODO: Send notification to the user
+      // } else {
+      //   const data = {
+      //     name: req.user.name,
+      //     title: course.name,
+      //   };
+
+      //   const html = await ejs.renderFile(
+      //     path.join(__dirname, "../mails/review-reply.ejs"),
+      //     data
+      //   );
+
+      //   try {
+      //     await sendMail({
+      //       email: req.user.email,
+      //       subject: "New Review",
+      //       template: "review-reply",
+      //       data: {
+      //         html,
+      //       },
+      //     });
+      //   } catch (error: any) {
+      //     return next(new ErrorHandler(error.message, 500));
+      //   }
+      // }
+
+      res.status(200).json({
+        success: true,
+        course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
