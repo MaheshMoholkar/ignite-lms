@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import ejs from "ejs";
 import path from "path";
 import sendMail from "../utils/mail";
+import notificationModel from "../models/notification.model";
 
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -305,6 +306,12 @@ export const addQuestion = CatchAsyncError(
 
       content.questions.push(newQuestion);
 
+      await notificationModel.create({
+        title: "New Question Received",
+        user: req.user._id,
+        message: `You have a new question in ${content.title}`,
+      });
+
       await course?.save();
 
       res.status(200).json({
@@ -365,8 +372,12 @@ export const addAnswer = CatchAsyncError(
 
       await course.save();
 
-      if (req.user._id !== question.user._id) {
-        //TODO: Send notification to the user
+      if (req.user._id === question.user._id) {
+        await notificationModel.create({
+          title: "New Reply Received",
+          user: question.user._id,
+          message: `You have a new answer in ${content.title}`,
+        });
       } else {
         const data = {
           name: question.user.name,
@@ -450,37 +461,11 @@ export const addReview = CatchAsyncError(
 
       await course.save();
 
-      const notification = {
+      await notificationModel.create({
         title: "New Review",
+        user: req.user._id,
         message: `You have a new review in ${course.name}`,
-      };
-
-      // if (req.user._id !== course.user._id) {
-      //   //TODO: Send notification to the user
-      // } else {
-      //   const data = {
-      //     name: req.user.name,
-      //     title: course.name,
-      //   };
-
-      //   const html = await ejs.renderFile(
-      //     path.join(__dirname, "../mails/review-reply.ejs"),
-      //     data
-      //   );
-
-      //   try {
-      //     await sendMail({
-      //       email: req.user.email,
-      //       subject: "New Review",
-      //       template: "review-reply",
-      //       data: {
-      //         html,
-      //       },
-      //     });
-      //   } catch (error: any) {
-      //     return next(new ErrorHandler(error.message, 500));
-      //   }
-      // }
+      });
 
       res.status(200).json({
         success: true,

@@ -6,6 +6,7 @@ import { ErrorMiddleware } from "./middlewares/error";
 import userRouter from "./routes/user.route";
 import courseRouter from "./routes/course.route";
 import orderRouter from "./routes/order.route";
+import notificationRouter from "./routes/notification.route";
 require("dotenv").config();
 
 // json parser
@@ -22,7 +23,7 @@ app.use(
 );
 
 // routes
-app.use("/api/v1", courseRouter, userRouter, orderRouter);
+app.use("/api/v1", courseRouter, userRouter, orderRouter, notificationRouter);
 
 // middleware
 app.use(ErrorMiddleware);
