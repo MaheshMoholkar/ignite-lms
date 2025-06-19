@@ -557,3 +557,52 @@ export const getAllUsers = CatchAsyncError(
     }
   }
 );
+
+export const updateUserRole = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await userModel.findById(req.params.id);
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      user.role = req.body.role;
+      await user.save();
+
+      await redis.del(user._id as string);
+
+      res.status(200).json({
+        success: true,
+        message: "User role updated successfully",
+        user,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// delete user
+export const deleteUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await userModel.findById(req.params.id);
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      await user.deleteOne();
+
+      await redis.del(user._id as string);
+
+      res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);

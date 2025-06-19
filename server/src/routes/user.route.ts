@@ -9,6 +9,8 @@ import {
   socialAuth,
   updateUserDetails,
   getAllUsers,
+  updateUserRole,
+  deleteUser,
 } from "../controllers/user.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 import upload from "../middlewares/upload";
@@ -41,6 +43,20 @@ userRouter.get(
   isAuthenticated,
   authorizeRoles("admin"),
   getAllUsers
+);
+
+userRouter.put(
+  "/update-user-role/:id",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  updateUserRole
+);
+
+userRouter.delete(
+  "/delete-user/:id",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  deleteUser
 );
 
 export default userRouter;
