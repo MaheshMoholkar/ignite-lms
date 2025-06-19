@@ -429,12 +429,6 @@ export const socialAuth = CatchAsyncError(
   }
 );
 
-interface IUpdateUserDetails {
-  name: string;
-  email: string;
-  avatar: Express.Multer.File;
-}
-
 // update user details
 export const updateUserDetails = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -541,6 +535,22 @@ export const updatePassword = CatchAsyncError(
       res.status(200).json({
         success: true,
         message: "Password updated successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// get all users
+export const getAllUsers = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await userModel.find({ role: "user" });
+
+      res.status(200).json({
+        success: true,
+        users,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));

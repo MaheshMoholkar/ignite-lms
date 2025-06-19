@@ -60,6 +60,9 @@ export const uploadCourse = CatchAsyncError(
       }
 
       const course = await courseModel.create(data);
+
+      await redisClient.del("all-courses");
+
       res.status(201).json({
         success: true,
         course,
@@ -150,6 +153,9 @@ export const editCourse = CatchAsyncError(
         { new: true }
       );
 
+      await redisClient.del("all-courses");
+      await redisClient.del(courseId);
+
       res.status(200).json({
         success: true,
         course,
@@ -201,7 +207,7 @@ export const getSingleCourse = CatchAsyncError(
   }
 );
 
-export const getAllCourses = CatchAsyncError(
+export const getAllPublicCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const cache = await redisClient.get("all-courses");
@@ -516,6 +522,21 @@ export const addReplytoReview = CatchAsyncError(
       res.status(200).json({
         success: true,
         course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const getAllCourses = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courses = await courseModel.find();
+
+      res.status(200).json({
+        success: true,
+        courses,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

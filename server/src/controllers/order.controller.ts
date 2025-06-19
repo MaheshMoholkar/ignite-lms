@@ -5,8 +5,6 @@ import orderModel from "../models/order.Model";
 import userModel from "../models/user.model";
 import courseModel from "../models/course.model";
 import notificationModel from "../models/notification.model";
-import path from "path";
-import ejs from "ejs";
 import sendMail from "../utils/mail";
 
 interface IOrder {
@@ -85,6 +83,21 @@ export const createOrder = CatchAsyncError(
       res.status(201).json({
         success: true,
         order: course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const getAllOrders = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const orders = await orderModel.find();
+
+      res.status(200).json({
+        success: true,
+        orders,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

@@ -8,6 +8,7 @@ import {
   getUserDetails,
   socialAuth,
   updateUserDetails,
+  getAllUsers,
 } from "../controllers/user.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 import upload from "../middlewares/upload";
@@ -34,5 +35,12 @@ userRouter.put(
 userRouter.post("/refresh-token", refreshToken);
 
 userRouter.post("/logout", isAuthenticated, logoutUser);
+
+userRouter.get(
+  "/get-all-users",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  getAllUsers
+);
 
 export default userRouter;

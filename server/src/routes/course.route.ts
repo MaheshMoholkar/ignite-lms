@@ -3,12 +3,13 @@ import {
   addQuestion,
   addAnswer,
   editCourse,
-  getAllCourses,
+  getAllPublicCourses,
   getCourseByUser,
   getSingleCourse,
   uploadCourse,
   addReview,
   addReplytoReview,
+  getAllCourses,
 } from "../controllers/course.controller";
 import { isAuthenticated, authorizeRoles } from "../middlewares/auth";
 import upload from "../middlewares/upload";
@@ -33,7 +34,13 @@ courseRouter.put(
 );
 
 courseRouter.get("/get-course/:id", getSingleCourse);
-courseRouter.get("/get-courses", getAllCourses);
+courseRouter.get("/get-courses", getAllPublicCourses);
+courseRouter.get(
+  "/get-all-courses",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  getAllCourses
+);
 courseRouter.get("/get-course-content/:id", isAuthenticated, getCourseByUser);
 courseRouter.put("/add-question", isAuthenticated, addQuestion);
 courseRouter.put("/add-answer", isAuthenticated, addAnswer);
