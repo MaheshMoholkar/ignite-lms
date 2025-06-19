@@ -1,6 +1,6 @@
 import { Secret } from "jsonwebtoken";
 import userModel, { IUser } from "../models/user.model";
-import ErrorHandler from "../utils/ErrorHandler";
+import ErrorHandler from "../utils/errorHandler";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
