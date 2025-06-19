@@ -489,3 +489,49 @@ export const addReview = CatchAsyncError(
     }
   }
 );
+
+interface IAddReviewReply {
+  comment: string;
+  courseId: string;
+  reviewId: string;
+}
+
+export const addReplytoReview = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { comment, courseId, reviewId } = req.body as IAddReviewReply;
+
+      const course = await courseModel.findById(courseId);
+
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      const review = course?.reviews.find((item: any) =>
+        item._id.equals(reviewId)
+      );
+
+      if (!review) {
+        return next(new ErrorHandler("Review not found", 404));
+      }
+
+      const reply: any = {
+        user: req.user,
+        comment,
+      };
+
+      if (!review.commentReplies) review.commentReplies = [];
+
+      review.commentReplies?.push(reply);
+
+      await course.save();
+
+      res.status(200).json({
+        success: true,
+        course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
