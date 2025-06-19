@@ -8,7 +8,6 @@ import { validateEmail } from "../utils/validators";
 import { generateRandomActivationCode } from "../utils/security";
 import sendMail from "../utils/mail";
 import redis from "../utils/redis";
-import { getUserById } from "../services/user.service";
 import { uploadFile, deleteFile, BUCKETS } from "../utils/minio";
 require("dotenv").config();
 
@@ -375,7 +374,7 @@ export const logoutUser = CatchAsyncError(
 export const getUserDetails = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user = await getUserById(req.user._id);
+      const user = await userModel.findById(req.user._id);
 
       if (!user) {
         return next(new ErrorHandler("User not found", 404));

@@ -3,7 +3,6 @@ import courseModel from "../models/course.model";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
 import ErrorHandler from "../helpers/ErrorHandler";
 import { uploadFile, BUCKETS, deleteFile } from "../utils/minio";
-import { createCourse } from "../services/course.service";
 import redisClient from "../utils/redis";
 import mongoose from "mongoose";
 import ejs from "ejs";
@@ -59,8 +58,11 @@ export const uploadCourse = CatchAsyncError(
         return next(new ErrorHandler("Please upload a course thumbnail", 400));
       }
 
-      // Create course
-      createCourse(data, res, next);
+      const course = await courseModel.create(data);
+      res.status(201).json({
+        success: true,
+        course,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
