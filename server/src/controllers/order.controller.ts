@@ -70,6 +70,10 @@ export const createOrder = CatchAsyncError(
 
       user.courses.push({ courseId: course.id });
 
+      course.purchased ? (course.purchased += 1) : (course.purchased = 1);
+
+      await course.save();
+
       await user.save();
 
       await notificationModel.create({
