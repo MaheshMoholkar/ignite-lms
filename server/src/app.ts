@@ -2,10 +2,11 @@ import express from "express";
 export const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
-require("dotenv").config();
 import { ErrorMiddleware } from "./middlewares/error";
 import userRouter from "./routes/user.route";
 import courseRouter from "./routes/course.route";
+import orderRouter from "./routes/order.route";
+require("dotenv").config();
 
 // json parser
 app.use(express.json({ limit: "50mb" }));
@@ -21,8 +22,7 @@ app.use(
 );
 
 // routes
-app.use("/api/v1", userRouter);
-app.use("/api/v1", courseRouter);
+app.use("/api/v1", courseRouter, userRouter, orderRouter);
 
 // middleware
 app.use(ErrorMiddleware);

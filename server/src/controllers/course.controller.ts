@@ -382,7 +382,7 @@ export const addAnswer = CatchAsyncError(
           await sendMail({
             email: question.user.email,
             subject: "New Reply to your question",
-            template: "question-reply",
+            template: "question-reply.ejs",
             data: {
               html,
             },
