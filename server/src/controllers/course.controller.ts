@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import courseModel from "../models/course.model";
 import { CatchAsyncError } from "../middlewares/catchAsyncErrors";
-import ErrorHandler from "../helpers/ErrorHandler";
+import ErrorHandler from "../utils/ErrorHandler";
 import { uploadFile, BUCKETS, deleteFile } from "../utils/minio";
 import redisClient from "../utils/redis";
 import mongoose from "mongoose";

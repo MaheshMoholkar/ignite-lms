@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import { CatchAsyncError } from "./catchAsyncErrors";
-import ErrorHandler from "../helpers/ErrorHandler";
+import ErrorHandler from "../utils/ErrorHandler";
 import redis from "../utils/redis";
 import userModel, { IUser } from "../models/user.model";
 
