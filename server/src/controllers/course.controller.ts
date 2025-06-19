@@ -376,7 +376,7 @@ export const addAnswer = CatchAsyncError(
         await notificationModel.create({
           title: "New Reply Received",
           user: question.user._id,
-          message: `You have a new answer in ${content.title}`,
+          message: `You have a new reply in ${content.title}`,
         });
       } else {
         const data = {
