@@ -20,40 +20,25 @@ async function setupMinioBuckets() {
       }
     }
 
-    // Set public access policy for both buckets
-    const profileImagesPolicy = {
+    // Set public access policy for buckets
+    const publicPolicy = (bucket: string) => ({
       Version: "2012-10-17",
       Statement: [
         {
           Effect: "Allow",
           Principal: { AWS: ["*"] },
           Action: ["s3:GetObject"],
-          Resource: [`arn:aws:s3:::${BUCKETS.PROFILE_IMAGES}/*`],
+          Resource: [`arn:aws:s3:::${bucket}/*`],
         },
       ],
-    };
+    });
 
-    const thumbnailsPolicy = {
-      Version: "2012-10-17",
-      Statement: [
-        {
-          Effect: "Allow",
-          Principal: { AWS: ["*"] },
-          Action: ["s3:GetObject"],
-          Resource: [`arn:aws:s3:::${BUCKETS.COURSE_THUMBNAILS}/*`],
-        },
-      ],
-    };
-
-    // Apply policy to both buckets
-    await minioClient.setBucketPolicy(
-      BUCKETS.PROFILE_IMAGES,
-      JSON.stringify(profileImagesPolicy)
-    );
-    await minioClient.setBucketPolicy(
-      BUCKETS.COURSE_THUMBNAILS,
-      JSON.stringify(thumbnailsPolicy)
-    );
+    for (const bucketName of Object.values(BUCKETS)) {
+      await minioClient.setBucketPolicy(
+        bucketName,
+        JSON.stringify(publicPolicy(bucketName))
+      );
+    }
 
     console.log("Successfully set up MinIO buckets with public access");
   } catch (error) {

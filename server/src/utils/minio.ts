@@ -12,6 +12,7 @@ const minioClient = new Client({
 const BUCKETS = {
   PROFILE_IMAGES: process.env.MINIO_PROFILE_BUCKET || "ignite-profile-images",
   COURSE_THUMBNAILS: process.env.MINIO_THUMBNAIL_BUCKET || "ignite-thumbnails",
+  LAYOUT_BANNERS: process.env.MINIO_BANNER_BUCKET || "ignite-layout-banners",
 };
 
 // Allowed image types
