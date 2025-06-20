@@ -194,7 +194,7 @@ export const getSingleCourse = CatchAsyncError(
           return next(new ErrorHandler("Course not found", 404));
         }
 
-        await redisClient.set(courseId, JSON.stringify(course), "EX", 84000);
+        await redisClient.set(courseId, JSON.stringify(course), "EX", 604800);
 
         res.status(200).json({
           success: true,
@@ -228,7 +228,7 @@ export const getAllPublicCourses = CatchAsyncError(
           "all-courses",
           JSON.stringify(courses),
           "EX",
-          84000
+          604800
         );
 
         res.status(200).json({

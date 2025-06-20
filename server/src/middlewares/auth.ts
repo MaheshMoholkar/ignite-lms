@@ -31,7 +31,7 @@ export const isAuthenticated = CatchAsyncError(
       if (!user) {
         return next(new ErrorHandler("User not found", 404));
       }
-      await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
+      await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
       req.user = user;
 
       next();

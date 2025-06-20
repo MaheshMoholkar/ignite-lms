@@ -198,7 +198,7 @@ export const activateUser = CatchAsyncError(
         expires: new Date(0),
       });
 
-      await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
+      await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
 
       res.status(200).json({
         success: true,
@@ -278,7 +278,7 @@ export const loginUser = CatchAsyncError(
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
-      await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
+      await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
 
       res.status(200).json({
         success: true,
@@ -332,7 +332,7 @@ export const refreshToken = CatchAsyncError(
         return next(new ErrorHandler("User not found", 404));
       }
 
-      await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
+      await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
 
       res.status(200).json({
         success: true,
@@ -380,7 +380,7 @@ export const getUserDetails = CatchAsyncError(
         return next(new ErrorHandler("User not found", 404));
       }
 
-      await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
+      await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
 
       res.status(200).json({
         success: true,
@@ -416,7 +416,7 @@ export const socialAuth = CatchAsyncError(
         isVerified: true,
       });
 
-      await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
+      await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
 
       res.status(201).json({
         success: true,
@@ -482,7 +482,7 @@ export const updateUserDetails = CatchAsyncError(
 
       await user.save();
 
-      await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
+      await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
       res.status(200).json({
         success: true,
         user,
@@ -530,7 +530,7 @@ export const updatePassword = CatchAsyncError(
       user.password = newPassword;
       await user.save();
 
-      await redis.set(user._id as string, JSON.stringify(user), "EX", 3600);
+      await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
 
       res.status(200).json({
         success: true,
