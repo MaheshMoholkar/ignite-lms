@@ -13,7 +13,7 @@ export default function Hero() {
           {/* Left side - Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm font-medium">
+              <div className="inline-flex items-center px-4 py-2 mt-4 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm font-medium">
                 <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
                 Learn from the Best
               </div>
@@ -130,8 +130,8 @@ export default function Hero() {
             </div>
 
             {/* Floating elements */}
-            <div className="absolute top-10 -right-10 w-20 h-20 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
-            <div className="absolute bottom-20 -left-8 w-16 h-16 bg-pink-400 rounded-full opacity-20 animate-pulse delay-1000"></div>
+            <div className="absolute top-10 -right-10 w-20 h-20 bg-yellow-400 rounded-full opacity-20 animate-pulse hidden lg:block"></div>
+            <div className="absolute bottom-20 -left-8 w-16 h-16 bg-pink-400 rounded-full opacity-20 animate-pulse delay-1000 hidden lg:block"></div>
           </div>
         </div>
       </div>
