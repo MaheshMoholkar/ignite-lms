@@ -1,29 +1,15 @@
 import axios from "axios";
 
+export const NEXT_PUBLIC_SERVER_URL = "http://localhost:3001/api/v1";
+
 // Create axios instance
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/v1",
+  baseURL: NEXT_PUBLIC_SERVER_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
-
-// Request interceptor
-api.interceptors.request.use(
-  (config) => {
-    // Add auth token if available
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 // Response interceptor
 api.interceptors.response.use(
@@ -32,7 +18,6 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized access
       if (typeof window !== "undefined") {
-        localStorage.removeItem("accessToken");
         window.location.href = "/login";
       }
     }

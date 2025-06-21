@@ -1,10 +1,10 @@
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import Categories from "@/components/Categories";
-import FeaturedCourses from "@/components/FeaturedCourses";
-import Features from "@/components/Features";
-import FAQ from "@/components/FAQ";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/home/Navbar";
+import Hero from "@/components/home/Hero";
+import Categories from "@/components/home/Categories";
+import FeaturedCourses from "@/components/home/FeaturedCourses";
+import Features from "@/components/home/Features";
+import FAQ from "@/components/home/FAQ";
+import Footer from "@/components/home/Footer";
 
 export default function Home() {
   return (
