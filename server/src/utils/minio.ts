@@ -44,10 +44,9 @@ async function uploadFile(
     // Upload to MinIO
     await minioClient.putObject(bucketName, uniqueFileName, file);
 
-    // Return permanent public URL
-    const publicUrl = `${
-      process.env.MINIO_ENDPOINT || "http://localhost:9000"
-    }/${bucketName}/${uniqueFileName}`;
+    // Return permanent public URL with proper protocol and port
+    const baseUrl = process.env.MINIO_URI || "http://localhost:9000";
+    const publicUrl = `${baseUrl}/${bucketName}/${uniqueFileName}`;
 
     return {
       public_id: uniqueFileName,

@@ -139,10 +139,7 @@ export const editCourse = CatchAsyncError(
           req.file.mimetype,
           BUCKETS.COURSE_THUMBNAILS
         );
-        data.thumbnail = {
-          public_id: req.file.originalname,
-          url: fileUrl,
-        };
+        data.thumbnail = fileUrl;
       }
 
       const course = await courseModel.findByIdAndUpdate(
