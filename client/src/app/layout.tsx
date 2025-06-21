@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ignite LMS - Learn, Grow, Succeed",
+  title: "Ignite LMS",
   description:
     "A modern learning management system designed to ignite your educational journey",
 };
