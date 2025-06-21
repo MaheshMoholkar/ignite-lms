@@ -50,7 +50,18 @@ export const registerUser = CatchAsyncError(
       // Check if email already exists
       const isEmailExist = await userModel.findOne({ email });
       if (isEmailExist) {
-        return next(new ErrorHandler("Email already exists", 400));
+        if (isEmailExist.isVerified) {
+          return next(new ErrorHandler("Email already exists", 400));
+        } else {
+          // If user is not verified, delete the existing user and proceed with registration
+          if (isEmailExist.avatar?.public_id) {
+            await deleteFile(
+              isEmailExist.avatar.public_id,
+              BUCKETS.PROFILE_IMAGES
+            );
+          }
+          await userModel.findByIdAndDelete(isEmailExist._id);
+        }
       }
 
       // Handle avatar upload if present
@@ -79,8 +90,9 @@ export const registerUser = CatchAsyncError(
       const activationCode = generateRandomActivationCode();
 
       // Generate authentication activation_token
+      const { password: _, ...userForToken } = userData;
       const activation_token = jwt.sign(
-        { user: userData, activationCode },
+        { user: userForToken },
         process.env.JWT_SECRET as Secret,
         { expiresIn: "1h" }
       );
@@ -111,6 +123,7 @@ export const registerUser = CatchAsyncError(
         res.cookie("activation_token", activation_token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
           maxAge: 60 * 60 * 1000, // 1 hour
         });
 
@@ -141,33 +154,28 @@ export const registerUser = CatchAsyncError(
 export const activateUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { activation_code } = req.body;
       const activation_token = req.cookies.activation_token;
-      const activation_code = req.body.activation_code;
 
-      if (!activation_token || !activation_code) {
-        return next(
-          new ErrorHandler(
-            "Please provide activation activation_token and code",
-            400
-          )
-        );
+      if (!activation_token) {
+        return next(new ErrorHandler("Please provide activation token", 400));
       }
 
-      let decodedToken: { user: IUser; activationCode: string };
+      if (!activation_code) {
+        return next(new ErrorHandler("Please provide activation code", 400));
+      }
+
+      let decodedToken: { user: IUser };
       try {
         decodedToken = jwt.verify(
           activation_token,
           process.env.JWT_SECRET as string
         ) as {
           user: IUser;
-          activationCode: string;
         };
       } catch (error) {
         return next(
-          new ErrorHandler(
-            "Invalid or expired activation activation_token",
-            400
-          )
+          new ErrorHandler("Invalid or expired activation token", 400)
         );
       }
 
@@ -199,6 +207,36 @@ export const activateUser = CatchAsyncError(
       });
 
       await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
+
+      // Generate access token
+      const accessToken = jwt.sign(
+        { id: user._id },
+        process.env.JWT_SECRET as Secret,
+        { expiresIn: "1h" }
+      );
+
+      // Generate refresh token
+      const refreshToken = jwt.sign(
+        { id: user._id },
+        process.env.JWT_REFRESH_SECRET as Secret,
+        { expiresIn: "7d" }
+      );
+
+      // Set access token in cookie
+      res.cookie("access_token", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 60 * 60 * 1000, // 1 hour
+      });
+
+      // Set refresh token in cookie
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
 
       res.status(200).json({
         success: true,
@@ -268,6 +306,7 @@ export const loginUser = CatchAsyncError(
       res.cookie("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 60 * 60 * 1000, // 1 hour
       });
 
@@ -275,6 +314,7 @@ export const loginUser = CatchAsyncError(
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -323,6 +363,7 @@ export const refreshToken = CatchAsyncError(
       res.cookie("access_token", access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 60 * 60 * 1000, // 1 hour
       });
 
