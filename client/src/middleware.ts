@@ -4,12 +4,32 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("access_token")?.value;
   const activationToken = request.cookies.get("activation_token")?.value;
+  const activationEmail = request.cookies.get("activation_email")?.value;
   const { pathname } = request.nextUrl;
 
+  // Handle activation page access
   if (pathname === "/activation") {
+    // If no activation token, redirect to register
+    if (!activationToken) {
+      return NextResponse.redirect(new URL("/register", request.url));
+    }
+
+    // If no activation email, redirect to register (incomplete activation flow)
+    if (!activationEmail) {
+      return NextResponse.redirect(new URL("/register", request.url));
+    }
+
+    // If user is already authenticated, redirect to home
+    if (accessToken) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    // Allow access to activation page
     return NextResponse.next();
   }
-  if (activationToken) {
+
+  // If user has activation token but is not on activation page, redirect to activation
+  if (activationToken && activationEmail && pathname !== "/activation") {
     return NextResponse.redirect(new URL("/activation", request.url));
   }
 
@@ -21,6 +41,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
+  // Allow access to all other pages
   return NextResponse.next();
 }
 

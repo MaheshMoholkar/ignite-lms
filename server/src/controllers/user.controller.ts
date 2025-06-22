@@ -125,6 +125,25 @@ export const registerUser = CatchAsyncError(
           secure: process.env.NODE_ENV === "production",
           sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
           maxAge: 60 * 60 * 1000, // 1 hour
+          path: "/",
+        });
+
+        // Set user email in cookie for activation page
+        res.cookie("activation_email", user.email, {
+          httpOnly: false, // Allow client-side access
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+          maxAge: 60 * 60 * 1000, // 1 hour
+          path: "/",
+        });
+
+        // Set user name in cookie for activation page
+        res.cookie("activation_name", user.name, {
+          httpOnly: false, // Allow client-side access
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+          maxAge: 60 * 60 * 1000, // 1 hour
+          path: "/",
         });
 
         res.status(201).json({
@@ -204,6 +223,20 @@ export const activateUser = CatchAsyncError(
       res.cookie("activation_token", "", {
         httpOnly: true,
         expires: new Date(0),
+        path: "/",
+      });
+
+      // Clear activation email and name cookies
+      res.cookie("activation_email", "", {
+        httpOnly: false,
+        expires: new Date(0),
+        path: "/",
+      });
+
+      res.cookie("activation_name", "", {
+        httpOnly: false,
+        expires: new Date(0),
+        path: "/",
       });
 
       await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
@@ -249,6 +282,68 @@ export const activateUser = CatchAsyncError(
           avatar: user.avatar,
         },
       });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// resend activation code
+export const resendActivationCode = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const activationEmail = req.cookies.activation_email;
+
+      if (!activationEmail) {
+        return next(
+          new ErrorHandler(
+            "No activation email found. Please register again.",
+            400
+          )
+        );
+      }
+
+      // Find the user by email
+      const user = await userModel
+        .findOne({ email: activationEmail })
+        .select("+activationCode");
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      if (user.isVerified) {
+        return next(new ErrorHandler("User is already activated", 400));
+      }
+
+      // Generate new activation code
+      const newActivationCode = generateRandomActivationCode();
+      user.activationCode = newActivationCode;
+      await user.save();
+
+      // Send new activation email
+      const data = {
+        user: {
+          name: user.name,
+        },
+        activationCode: newActivationCode,
+      };
+
+      try {
+        await sendMail({
+          email: user.email,
+          subject: "New Activation Code - Ignite LMS",
+          template: "activation-mail.ejs",
+          data,
+        });
+
+        res.status(200).json({
+          success: true,
+          message: "New activation code sent successfully",
+        });
+      } catch (error: any) {
+        return next(new ErrorHandler("Failed to send activation email", 500));
+      }
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }

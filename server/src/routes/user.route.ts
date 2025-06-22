@@ -11,6 +11,7 @@ import {
   getAllUsers,
   updateUserRole,
   deleteUser,
+  resendActivationCode,
 } from "../controllers/user.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 import upload from "../middlewares/upload";
@@ -22,6 +23,8 @@ userRouter.post("/register", upload.single("avatar"), registerUser);
 userRouter.post("/social-auth", socialAuth);
 
 userRouter.post("/activate-user", activateUser);
+
+userRouter.post("/resend-activation-code", resendActivationCode);
 
 userRouter.post("/login", loginUser);
 

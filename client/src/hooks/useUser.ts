@@ -1,5 +1,6 @@
+import { NEXT_PUBLIC_SERVER_URL } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import api from "../lib/api";
+import axios, { AxiosError } from "axios";
 
 interface User {
   _id: string;
@@ -15,9 +16,19 @@ interface User {
 
 const fetchUser = async (): Promise<User | null> => {
   try {
-    const response = await api.get<{ user: User }>("/me");
+    const response = await axios.get<{ user: User }>(
+      `${NEXT_PUBLIC_SERVER_URL}/me`,
+      {
+        withCredentials: true,
+      }
+    );
     return response.data.user;
-  } catch {
+  } catch (error) {
+    // Don't redirect on 401, just return null for public pages
+    if (error instanceof AxiosError) {
+      return null;
+    }
+    // For other errors, still return null but don't redirect
     return null;
   }
 };
@@ -28,5 +39,6 @@ export const useUser = () => {
     queryFn: fetchUser,
     staleTime: Infinity,
     retry: false,
+    refetchOnWindowFocus: true,
   });
 };
