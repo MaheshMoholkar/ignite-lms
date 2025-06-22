@@ -41,11 +41,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // If user is not authenticated and tries to access dashboard, redirect to login
-  if (!accessToken && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
   // Allow access to all other pages
   return NextResponse.next();
 }
