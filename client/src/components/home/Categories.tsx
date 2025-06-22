@@ -18,13 +18,21 @@ export default function Categories() {
 
   if (isLoading) {
     return (
-      <section id="categories" className="py-20 bg-white dark:bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section
+        id="categories"
+        className="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden"
+      >
+        {/* Background decorative elements */}
+        <div className="absolute top-20 right-20 w-32 h-32 bg-indigo-600/5 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 left-20 w-24 h-24 bg-purple-600/5 rounded-full blur-xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-600/3 rounded-full blur-3xl"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Explore Categories
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-gray-300">
               Discover courses in your area of interest
             </p>
           </div>
@@ -32,10 +40,10 @@ export default function Categories() {
             {[...Array(8)].map((_, i) => (
               <div
                 key={i}
-                className="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 animate-pulse"
+                className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 animate-pulse border border-gray-700/50"
               >
-                <div className="w-12 h-12 bg-gray-200 dark:bg-gray-600 rounded-lg mb-4"></div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div>
+                <div className="w-12 h-12 bg-gray-700 rounded-xl mb-4"></div>
+                <div className="h-4 bg-gray-700 rounded w-3/4"></div>
               </div>
             ))}
           </div>
@@ -46,13 +54,21 @@ export default function Categories() {
 
   if (error || !categoriesData?.categories) {
     return (
-      <section id="categories" className="py-20 bg-white dark:bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section
+        id="categories"
+        className="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden"
+      >
+        {/* Background decorative elements */}
+        <div className="absolute top-20 right-20 w-32 h-32 bg-indigo-600/5 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 left-20 w-24 h-24 bg-purple-600/5 rounded-full blur-xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-600/3 rounded-full blur-3xl"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Explore Categories
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-gray-300">
               No categories available at the moment.
             </p>
           </div>
@@ -62,13 +78,23 @@ export default function Categories() {
   }
 
   return (
-    <section id="categories" className="py-20 bg-white dark:bg-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      id="categories"
+      className="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden"
+    >
+      {/* Background decorative elements */}
+      <div className="absolute top-20 right-20 w-32 h-32 bg-indigo-600/5 rounded-full blur-xl"></div>
+      <div className="absolute bottom-20 left-20 w-24 h-24 bg-purple-600/5 rounded-full blur-xl"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-600/3 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/3 right-1/3 w-16 h-16 bg-blue-600/10 rounded-full blur-lg"></div>
+      <div className="absolute bottom-1/3 left-1/3 w-12 h-12 bg-indigo-600/8 rounded-full blur-lg"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Explore Categories
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-gray-300">
             Discover courses in your area of interest
           </p>
         </div>
@@ -82,12 +108,12 @@ export default function Categories() {
             return (
               <div
                 key={index}
-                className="group bg-gray-50 dark:bg-gray-700 rounded-xl p-6 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-600"
+                className="group bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 hover:bg-gray-700/50 transition-all duration-300 cursor-pointer border border-gray-700/50 hover:border-indigo-500/50 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
               >
-                <div className="flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/40 transition-colors">
-                  <IconComponent className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl mb-4 group-hover:from-indigo-700 group-hover:to-purple-700 transition-all duration-300 shadow-lg">
+                  <IconComponent className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <h3 className="text-lg font-semibold text-white group-hover:text-indigo-300 transition-colors">
                   {category.title}
                 </h3>
               </div>
