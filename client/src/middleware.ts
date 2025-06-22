@@ -33,12 +33,17 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/activation", request.url));
   }
 
-  // If user is authenticated and tries to access login/register, redirect to home
+  // If user is authenticated and tries to access login/register, redirect to dashboard
   if (
     accessToken &&
     (pathname.startsWith("/login") || pathname.startsWith("/register"))
   ) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // If user is not authenticated and tries to access dashboard, redirect to login
+  if (!accessToken && pathname.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // Allow access to all other pages
