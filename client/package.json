@@ -9,10 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.1.1",
     "@tanstack/react-query": "^5.80.10",
-    "@tanstack/react-query-devtools": "^5.80.10",
-    "@types/yup": "^0.29.14",
     "axios": "^1.10.0",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.519.0",
@@ -25,12 +22,15 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.80.10",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@hookform/resolvers": "^5.1.1",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/yup": "^0.29.14",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
     "tailwindcss": "^4",

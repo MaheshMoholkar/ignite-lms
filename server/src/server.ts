@@ -9,7 +9,7 @@ const startServer = async () => {
     await connectDB();
 
     // Setup MinIO buckets
-    await setupMinioBuckets();
+    // await setupMinioBuckets();
 
     // Start server
     app.listen(process.env.PORT, () => {

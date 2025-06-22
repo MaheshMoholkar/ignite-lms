@@ -6,7 +6,10 @@ export function middleware(request: NextRequest) {
   const activationToken = request.cookies.get("activation_token")?.value;
   const { pathname } = request.nextUrl;
 
-  if (activationToken && pathname !== "/activation") {
+  if (pathname === "/activation") {
+    return NextResponse.next();
+  }
+  if (activationToken) {
     return NextResponse.redirect(new URL("/activation", request.url));
   }
 

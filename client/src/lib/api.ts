@@ -1,6 +1,8 @@
 import axios from "axios";
 
-export const NEXT_PUBLIC_SERVER_URL = "http://localhost:3001/api/v1";
+export const DEV = "http://localhost:3001/api/v1";
+export const NEXT_PUBLIC_SERVER_URL =
+  "https://ignite-server-production.up.railway.app/api/v1";
 
 // Create axios instance
 const api = axios.create({
