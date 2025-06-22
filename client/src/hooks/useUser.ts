@@ -1,4 +1,3 @@
-import { NEXT_PUBLIC_SERVER_URL } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
@@ -17,7 +16,7 @@ interface User {
 const fetchUser = async (): Promise<User | null> => {
   try {
     const response = await axios.get<{ user: User }>(
-      `${NEXT_PUBLIC_SERVER_URL}/me`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/me`,
       {
         withCredentials: true,
       }
