@@ -1,8 +1,15 @@
 "use client";
 
 import { ArrowRight, Play, Users, BookOpen, Award } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
+  const router = useRouter();
+
+  const handleStartLearning = () => {
+    router.push("/register");
+  };
+
   return (
     <section
       id="home"
@@ -39,8 +46,11 @@ export default function Hero() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                Start Learning Free
+              <button
+                onClick={handleStartLearning}
+                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Start Learning
                 <ArrowRight className="ml-2 h-5 w-5" />
               </button>
               <button className="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-600 text-gray-300 hover:border-indigo-400 hover:text-indigo-400 font-semibold rounded-xl transition-all duration-200 bg-gray-800/50 backdrop-blur-sm">

@@ -10,6 +10,7 @@ import {
   BookOpen,
   Headphones,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const features = [
   {
@@ -63,6 +64,12 @@ const features = [
 ];
 
 export default function Features() {
+  const router = useRouter();
+
+  const handleGetStarted = () => {
+    router.push("/register");
+  };
+
   return (
     <section
       id="features"
@@ -116,7 +123,10 @@ export default function Features() {
               Join thousands of students who are already transforming their
               careers with our expert-led courses.
             </p>
-            <button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            <button
+              onClick={handleGetStarted}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
               Get Started Today
             </button>
           </div>

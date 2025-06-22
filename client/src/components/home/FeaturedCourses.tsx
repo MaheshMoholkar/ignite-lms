@@ -3,6 +3,7 @@
 import { usePublicCourses } from "@/hooks/useApi";
 import { Star, Clock, Users, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function FeaturedCourses() {
   const { data: courses, isLoading, error } = usePublicCourses();
@@ -162,10 +163,13 @@ export default function FeaturedCourses() {
         </div>
 
         <div className="text-center mt-12">
-          <button className="inline-flex items-center px-8 py-4 border-2 border-indigo-600 text-indigo-400 hover:bg-indigo-600 hover:text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg">
+          <Link
+            href="/courses"
+            className="inline-flex items-center px-8 py-4 border-2 border-indigo-600 text-indigo-400 hover:bg-indigo-600 hover:text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg"
+          >
             View All Courses
             <ArrowRight className="ml-2 h-5 w-5" />
-          </button>
+          </Link>
         </div>
       </div>
     </section>
