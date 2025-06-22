@@ -492,6 +492,7 @@ export const logoutUser = CatchAsyncError(
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         expires: new Date(0),
+        path: "/",
       });
 
       res.cookie("refresh_token", "", {
@@ -499,6 +500,7 @@ export const logoutUser = CatchAsyncError(
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         expires: new Date(0),
+        path: "/",
       });
 
       await redis.del(req.user._id as string);
