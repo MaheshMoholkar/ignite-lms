@@ -5,6 +5,7 @@ import {
   editCourse,
   getAllPublicCourses,
   getCourseByUser,
+  getUserCourses,
   getSingleCourse,
   uploadCourse,
   addReview,
@@ -36,6 +37,7 @@ courseRouter.put(
 
 courseRouter.get("/get-course/:id", getSingleCourse);
 courseRouter.get("/get-courses", getAllPublicCourses);
+courseRouter.get("/get-user-courses", isAuthenticated, getUserCourses);
 courseRouter.get(
   "/get-all-courses",
   isAuthenticated,

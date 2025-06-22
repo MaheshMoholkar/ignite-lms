@@ -575,24 +575,10 @@ export const updateUserDetails = CatchAsyncError(
         return next(new ErrorHandler("User not found", 404));
       }
 
-      const { name, email } = req.body || {};
+      const { name } = req.body || {};
       let avatar;
 
-      // Validate email if provided
-      if (email) {
-        if (!validateEmail(email)) {
-          return next(new ErrorHandler("Please provide a valid email", 400));
-        }
-
-        if (email !== user.email) {
-          const isEmailExist = await userModel.findOne({ email });
-          if (isEmailExist) {
-            return next(new ErrorHandler("Email already exists", 400));
-          }
-          user.email = email;
-        }
-      }
-
+      // Only allow name and avatar updates, email is immutable
       if (name) user.name = name;
 
       // Handle avatar upload if present

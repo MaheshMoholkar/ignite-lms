@@ -8,6 +8,7 @@ import {
   getUserDetails,
   socialAuth,
   updateUserDetails,
+  updatePassword,
   getAllUsers,
   updateUserRole,
   deleteUser,
@@ -36,6 +37,8 @@ userRouter.put(
   upload.single("avatar"),
   updateUserDetails
 );
+
+userRouter.put("/update-password", isAuthenticated, updatePassword);
 
 userRouter.post("/refresh-token", refreshToken);
 

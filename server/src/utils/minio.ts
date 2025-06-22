@@ -3,7 +3,7 @@ import { Client } from "minio";
 const minioClient = new Client({
   endPoint: process.env.MINIO_ENDPOINT || "localhost",
   port: process.env.MINIO_PORT ? parseInt(process.env.MINIO_PORT) : 9000,
-  useSSL: true,
+  useSSL: process.env.NODE_ENV === "production",
   accessKey: process.env.MINIO_ROOT_USER || "minioadmin",
   secretKey: process.env.MINIO_ROOT_PASSWORD || "miniosecret",
 });
@@ -45,7 +45,8 @@ async function uploadFile(
     await minioClient.putObject(bucketName, uniqueFileName, file);
 
     // Return permanent public URL with proper protocol and port
-    const baseUrl = process.env.MINIO_URI || "http://localhost:9000";
+    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+    const baseUrl = process.env.MINIO_URI || `${protocol}://localhost:9000`;
     const publicUrl = `${baseUrl}/${bucketName}/${uniqueFileName}`;
 
     return {

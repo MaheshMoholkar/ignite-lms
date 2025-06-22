@@ -4,7 +4,7 @@ import { BUCKETS } from "./minio";
 const minioClient = new Client({
   endPoint: process.env.MINIO_ENDPOINT || "localhost",
   port: 9000,
-  useSSL: false,
+  useSSL: process.env.NODE_ENV === "production",
   accessKey: process.env.MINIO_ROOT_USER || "minioadmin",
   secretKey: process.env.MINIO_ROOT_PASSWORD || "miniosecret",
 });

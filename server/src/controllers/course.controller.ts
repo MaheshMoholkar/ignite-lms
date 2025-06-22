@@ -276,6 +276,38 @@ export const getCourseByUser = CatchAsyncError(
   }
 );
 
+export const getUserCourses = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userCourses = req.user.courses;
+
+      if (userCourses.length === 0) {
+        return res.status(200).json({
+          success: true,
+          courses: [],
+        });
+      }
+
+      // Get course IDs from user's purchased courses
+      const courseIds = userCourses.map((course: any) => course.courseId);
+
+      // Fetch full course details for all purchased courses
+      const courses = await courseModel
+        .find({ _id: { $in: courseIds } })
+        .select(
+          "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+        );
+
+      res.status(200).json({
+        success: true,
+        courses,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
 interface IAddQuestion {
   question: string;
   courseId: string;
