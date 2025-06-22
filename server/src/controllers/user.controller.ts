@@ -258,17 +258,19 @@ export const activateUser = CatchAsyncError(
       // Set access token in cookie
       res.cookie("access_token", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: true,
+        sameSite: "none",
         maxAge: 60 * 60 * 1000, // 1 hour
+        path: "/",
       });
 
       // Set refresh token in cookie
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: true,
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        path: "/",
       });
 
       res.status(200).json({
@@ -403,6 +405,7 @@ export const loginUser = CatchAsyncError(
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 60 * 60 * 1000, // 1 hour
+        path: "/",
       });
 
       // Set refresh token in cookie
@@ -411,6 +414,7 @@ export const loginUser = CatchAsyncError(
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        path: "/",
       });
 
       await redis.set(user._id as string, JSON.stringify(user), "EX", 604800);
@@ -486,12 +490,22 @@ export const logoutUser = CatchAsyncError(
     try {
       res.cookie("access_token", "", {
         httpOnly: true,
+        secure: true,
+        sameSite: "none",
         expires: new Date(0),
+        path: "/",
+        domain:
+          process.env.NODE_ENV === "production" ? ".railway.app" : undefined,
       });
 
       res.cookie("refresh_token", "", {
         httpOnly: true,
+        secure: true,
+        sameSite: "none",
         expires: new Date(0),
+        path: "/",
+        domain:
+          process.env.NODE_ENV === "production" ? ".railway.app" : undefined,
       });
 
       await redis.del(req.user._id as string);
