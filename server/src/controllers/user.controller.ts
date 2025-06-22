@@ -258,17 +258,16 @@ export const activateUser = CatchAsyncError(
       // Set access token in cookie
       res.cookie("access_token", accessToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 60 * 60 * 1000, // 1 hour
-        path: "/",
       });
 
       // Set refresh token in cookie
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         path: "/",
       });
@@ -490,8 +489,8 @@ export const logoutUser = CatchAsyncError(
     try {
       res.cookie("access_token", "", {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         expires: new Date(0),
         path: "/",
         domain:
@@ -500,8 +499,8 @@ export const logoutUser = CatchAsyncError(
 
       res.cookie("refresh_token", "", {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         expires: new Date(0),
         path: "/",
         domain:
