@@ -33,7 +33,7 @@ const LoginForm = () => {
       const response = await api.post(`/login`, data, {
         withCredentials: true,
       });
-      if (response.status === 200) {
+      if (response.data.success) {
         toast.success("Login successful!");
         router.replace("/dashboard");
       } else {
