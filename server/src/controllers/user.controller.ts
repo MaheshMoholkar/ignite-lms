@@ -492,9 +492,6 @@ export const logoutUser = CatchAsyncError(
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         expires: new Date(0),
-        path: "/",
-        domain:
-          process.env.NODE_ENV === "production" ? ".railway.app" : undefined,
       });
 
       res.cookie("refresh_token", "", {
@@ -502,9 +499,6 @@ export const logoutUser = CatchAsyncError(
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         expires: new Date(0),
-        path: "/",
-        domain:
-          process.env.NODE_ENV === "production" ? ".railway.app" : undefined,
       });
 
       await redis.del(req.user._id as string);
