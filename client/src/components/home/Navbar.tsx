@@ -29,7 +29,7 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await api.post("/logout");
+      await api.post("/logout", {}, { withCredentials: true });
       queryClient.clear();
       toast.success("Logged out successfully");
       setTimeout(() => {
