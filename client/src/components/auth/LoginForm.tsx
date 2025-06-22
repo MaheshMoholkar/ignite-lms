@@ -9,7 +9,6 @@ import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
-import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -21,7 +20,6 @@ type LoginFormData = yup.InferType<typeof loginSchema>;
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -32,12 +30,15 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await api.post(`/login`, data, {
+      const response = await api.post(`/login`, data, {
         withCredentials: true,
       });
-      toast.success("Login successful!");
-      await queryClient.invalidateQueries({ queryKey: ["user"] });
-      router.replace("/dashboard");
+      if (response.status === 200) {
+        toast.success("Login successful!");
+        router.replace("/dashboard");
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<{ message: string }>;
