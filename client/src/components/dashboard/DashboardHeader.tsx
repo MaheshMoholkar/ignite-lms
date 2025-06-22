@@ -2,6 +2,7 @@
 
 import { Menu, Search } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
+import Image from "next/image";
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;
@@ -43,7 +44,7 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
           {/* User avatar */}
           <div className="flex items-center space-x-3">
             {user?.avatar?.url ? (
-              <img
+              <Image
                 src={user.avatar.url}
                 alt={user.name}
                 className="w-10 h-10 rounded-full object-cover shadow-lg border border-indigo-500/30"

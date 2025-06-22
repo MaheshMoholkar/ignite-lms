@@ -32,7 +32,9 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await api.post(`/login`, data);
+      await api.post(`/login`, data, {
+        withCredentials: true,
+      });
       toast.success("Login successful!");
       await queryClient.invalidateQueries({ queryKey: ["user"] });
       router.replace("/dashboard");
