@@ -190,7 +190,7 @@ const RegisterForm = () => {
             <div className="w-full border-t border-gray-600" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-900 text-gray-400">
+            <span className="px-2 text-gray-400 bg-gray-800">
               Or continue with
             </span>
           </div>

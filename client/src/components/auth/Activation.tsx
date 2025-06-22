@@ -89,7 +89,7 @@ const Activation = () => {
       // Clear the activation token from cookies
       clearActivationToken();
       await queryClient.invalidateQueries({ queryKey: ["user"] });
-      router.replace("/");
+      router.replace("/dashboard");
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       const errorMessage =
