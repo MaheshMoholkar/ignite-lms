@@ -27,9 +27,21 @@ export default function Navbar() {
     setMounted(true);
   }, []);
 
+  const clearCookies = () => {
+    // Delete all cookies
+    document.cookie.split(";").forEach((c) => {
+      const eqPos = c.indexOf("=");
+      const name = eqPos > -1 ? c.substr(0, eqPos).trim() : c.trim();
+      document.cookie = name + "=;max-age=0;path=/";
+      document.cookie =
+        name + "=;max-age=0;path=/;domain=" + window.location.hostname;
+    });
+  };
+
   const handleLogout = async () => {
     try {
       await api.post("/logout", {}, { withCredentials: true });
+      clearCookies(); // Clear all cookies
       queryClient.clear();
       toast.success("Logged out successfully");
       setTimeout(() => {
