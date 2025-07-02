@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Filter, Star, Clock, Users, BookOpen } from "lucide-react";
+import { useUser } from "@/hooks/useUser";
 import api from "@/lib/api";
+import Image from "next/image";
 
 interface Course {
   _id: string;
@@ -50,6 +52,7 @@ interface CourseData {
 
 export default function AllCoursesPage() {
   const router = useRouter();
+  const { data: user } = useUser();
   const [courses, setCourses] = useState<Course[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +75,43 @@ export default function AllCoursesPage() {
     }
   };
 
-  const filterCourses = () => {
+  // Check if user has purchased a specific course
+  const isCoursePurchased = (courseId: string) => {
+    if (!user) return false;
+    return (
+      user.courses?.some(
+        (purchasedCourse: { courseId: string }) =>
+          purchasedCourse.courseId === courseId
+      ) || false
+    );
+  };
+
+  // Get button text based on purchase status
+  const getButtonText = (courseId: string) => {
+    if (!user) return "Get Started";
+    if (isCoursePurchased(courseId)) return "Go to Course";
+    return "Enroll Now";
+  };
+
+  // Handle button click
+  const handleButtonClick = (e: React.MouseEvent, courseId: string) => {
+    e.stopPropagation();
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    if (isCoursePurchased(courseId)) {
+      router.push("/dashboard/courses");
+      return;
+    }
+
+    // Handle enrollment logic here
+    alert("Enrollment functionality to be implemented");
+  };
+
+  const filterCourses = useCallback(() => {
     let filtered = courses;
 
     // Search filter
@@ -109,11 +148,11 @@ export default function AllCoursesPage() {
     }
 
     setFilteredCourses(filtered);
-  };
+  }, [courses, searchTerm, selectedLevel, selectedPrice]);
 
   useEffect(() => {
     filterCourses();
-  }, [courses, searchTerm, selectedLevel, selectedPrice]);
+  }, [filterCourses]);
 
   const getRatingStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -228,9 +267,10 @@ export default function AllCoursesPage() {
             >
               {/* Course Thumbnail */}
               <div className="relative h-56 bg-gray-700 overflow-hidden">
-                <img
+                <Image
                   src={course.thumbnail.url}
-                  alt={course.title}
+                  alt="course thumbnail"
+                  fill
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
@@ -303,10 +343,10 @@ export default function AllCoursesPage() {
                       View Details
                     </button>
                     <button
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => handleButtonClick(e, course._id)}
                       className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
                     >
-                      Enroll Now
+                      {getButtonText(course._id)}
                     </button>
                   </div>
                 </div>
