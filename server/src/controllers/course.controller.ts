@@ -33,13 +33,11 @@ export const uploadCourse = CatchAsyncError(
         const courseDataItem = {
           title: data[`courseData[${index}].title`],
           description: data[`courseData[${index}].description`],
-          videoUrl: data[`courseData[${index}].videoUrl`],
+          videoFile: data[`courseData[${index}].videoFile`]
+            ? JSON.parse(data[`courseData[${index}].videoFile`])
+            : undefined,
           videoSection: data[`courseData[${index}].videoSection`],
           videoLength: data[`courseData[${index}].videoLength`],
-          links:
-            typeof data[`courseData[${index}].links`] === "string"
-              ? JSON.parse(data[`courseData[${index}].links`])
-              : data[`courseData[${index}].links`],
         };
         courseDataArray.push(courseDataItem);
         index++;
@@ -108,13 +106,11 @@ export const editCourse = CatchAsyncError(
         const courseDataItem = {
           title: data[`courseData[${index}].title`],
           description: data[`courseData[${index}].description`],
-          videoUrl: data[`courseData[${index}].videoUrl`],
+          videoFile: data[`courseData[${index}].videoFile`]
+            ? JSON.parse(data[`courseData[${index}].videoFile`])
+            : undefined,
           videoSection: data[`courseData[${index}].videoSection`],
           videoLength: data[`courseData[${index}].videoLength`],
-          links:
-            typeof data[`courseData[${index}].links`] === "string"
-              ? JSON.parse(data[`courseData[${index}].links`])
-              : data[`courseData[${index}].links`],
         };
         courseDataArray.push(courseDataItem);
         index++;
@@ -184,7 +180,7 @@ export const getSingleCourse = CatchAsyncError(
         const course = await courseModel
           .findById(courseId)
           .select(
-            "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+            "-courseData.videoUrl -courseData.suggestions -courseData.questions"
           );
 
         if (!course) {
@@ -218,7 +214,7 @@ export const getAllPublicCourses = CatchAsyncError(
         const courses = await courseModel
           .find()
           .select(
-            "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+            "-courseData.videoUrl -courseData.suggestions -courseData.questions"
           );
 
         await redisClient.set(
@@ -295,7 +291,7 @@ export const getUserCourses = CatchAsyncError(
       const courses = await courseModel
         .find({ _id: { $in: courseIds } })
         .select(
-          "-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links"
+          "-courseData.videoUrl -courseData.suggestions -courseData.questions"
         );
 
       res.status(200).json({
@@ -598,6 +594,30 @@ export const deleteCourse = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+export const uploadCourseVideo = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.file) {
+        return next(new ErrorHandler("Please upload a video file", 400));
+      }
+
+      const fileUrl = await uploadFile(
+        req.file.buffer,
+        req.file.originalname,
+        req.file.mimetype,
+        BUCKETS.COURSE_VIDEOS
+      );
+
+      res.status(200).json({
+        success: true,
+        videoFile: fileUrl,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );
