@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Search, Filter, Star, Clock, Users, BookOpen } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 import api from "@/lib/api";
@@ -51,6 +52,7 @@ interface CourseData {
 }
 
 export default function CoursesPage() {
+  const router = useRouter();
   const [courses, setCourses] = useState<Course[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -259,14 +261,15 @@ export default function CoursesPage() {
             {filteredCourses.map((course, index) => (
               <div
                 key={course._id}
-                className="group bg-gray-800/30 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:transform hover:-translate-y-2 hover:border-indigo-500/30"
+                className="group bg-gray-800/30 backdrop-blur-sm border border-gray-700/50 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 hover:transform hover:-translate-y-2 hover:border-indigo-500/30 cursor-pointer"
                 style={{ animationDelay: `${index * 100}ms` }}
+                onClick={() => router.push(`/courses/${course._id}`)}
               >
                 {/* Course Thumbnail */}
                 <div className="relative h-56 bg-gray-700 overflow-hidden">
                   <Image
                     src={course.thumbnail.url}
-                    alt={course.title}
+                    alt="course thumbnail"
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -330,9 +333,26 @@ export default function CoursesPage() {
                         </>
                       )}
                     </div>
-                    <button className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 hover:shadow-lg">
-                      {user ? "Enroll Now" : "Get Started"}
-                    </button>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/courses/${course._id}`);
+                        }}
+                        className="px-4 py-2 bg-gray-700/50 hover:bg-gray-600/50 text-white rounded-xl font-semibold transition-all duration-200"
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/courses/${course._id}`);
+                        }}
+                        className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
+                      >
+                        {user ? "Enroll Now" : "Get Started"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

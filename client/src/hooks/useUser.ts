@@ -11,6 +11,7 @@ interface User {
     public_id: string;
     url: string;
   };
+  courses?: Array<{ courseId: string }>;
 }
 
 const fetchUser = async (): Promise<User | null> => {

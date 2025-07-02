@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   Search,
   Filter,
@@ -57,6 +58,7 @@ interface CourseData {
 }
 
 export default function CoursesPage() {
+  const router = useRouter();
   const [courses, setCourses] = useState<Course[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -220,13 +222,16 @@ export default function CoursesPage() {
           {filteredCourses.map((course) => (
             <div
               key={course._id}
-              className="group bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 hover:border-indigo-500/30 transition-all duration-300 overflow-hidden hover:shadow-2xl hover:transform hover:-translate-y-1"
+              className="group bg-gray-800/30 backdrop-blur-sm rounded-2xl border border-gray-700/50 hover:border-indigo-500/30 transition-all duration-300 overflow-hidden hover:shadow-2xl hover:transform hover:-translate-y-1 cursor-pointer"
+              onClick={() => router.push(`/courses/${course._id}`)}
             >
               {/* Course Thumbnail */}
               <div className="relative h-48 bg-gradient-to-br from-indigo-500 to-purple-600 overflow-hidden">
                 <Image
+                  width={100}
+                  height={100}
                   src={course.thumbnail.url}
-                  alt={course.title}
+                  alt="course thumbnail"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-black/20"></div>
@@ -284,11 +289,20 @@ export default function CoursesPage() {
 
                 {/* Action Buttons */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
-                  <button className="flex items-center space-x-2 px-4 py-2 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white rounded-lg transition-all duration-200">
+                  <button
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center space-x-2 px-4 py-2 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white rounded-lg transition-all duration-200"
+                  >
                     <Play className="h-4 w-4" />
                     <span>Continue</span>
                   </button>
-                  <button className="flex items-center space-x-2 px-4 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 hover:text-indigo-300 rounded-lg transition-all duration-200">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/courses/${course._id}`);
+                    }}
+                    className="flex items-center space-x-2 px-4 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 hover:text-indigo-300 rounded-lg transition-all duration-200"
+                  >
                     <ExternalLink className="h-4 w-4" />
                     <span>View Course</span>
                   </button>

@@ -2,9 +2,24 @@
 
 import { useUser } from "@/hooks/useUser";
 import { BookOpen, Clock } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
   const { data: user } = useUser();
+  const router = useRouter();
+
+  // Redirect admin users to admin dashboard
+  useEffect(() => {
+    if (user && user.role === "admin") {
+      router.replace("/admin");
+    }
+  }, [user, router]);
+
+  // Don't render anything while redirecting
+  if (user && user.role === "admin") {
+    return null;
+  }
 
   const stats = [
     {

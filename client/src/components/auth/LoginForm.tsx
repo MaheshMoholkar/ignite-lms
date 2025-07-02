@@ -8,6 +8,7 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
 
 const loginSchema = yup.object().shape({
@@ -20,6 +21,7 @@ type LoginFormData = yup.InferType<typeof loginSchema>;
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -33,9 +35,16 @@ const LoginForm = () => {
       const response = await api.post(`/login`, data, {
         withCredentials: true,
       });
-      if (response.data.success) {
+      if (response.status === 200) {
+        await queryClient.invalidateQueries({ queryKey: ["user"] });
         toast.success("Login successful!");
-        router.replace("/dashboard");
+
+        // Check if user is admin and redirect accordingly
+        if (response.data.user?.role === "admin") {
+          router.replace("/admin");
+        } else {
+          router.replace("/dashboard");
+        }
       } else {
         toast.error(response.data.message);
       }

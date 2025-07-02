@@ -4,9 +4,11 @@ import { usePublicCourses } from "@/hooks/useApi";
 import { Star, Clock, Users, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function FeaturedCourses() {
   const { data: courses, isLoading, error } = usePublicCourses();
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -106,7 +108,8 @@ export default function FeaturedCourses() {
           {featuredCourses.map((course, index) => (
             <div
               key={course._id}
-              className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group border border-gray-700/50 hover:border-indigo-500/50 transform hover:-translate-y-1"
+              className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group border border-gray-700/50 hover:border-indigo-500/50 transform hover:-translate-y-1 cursor-pointer"
+              onClick={() => router.push(`/courses/${course._id}`)}
             >
               <div className="relative h-48">
                 <Image
@@ -153,8 +156,14 @@ export default function FeaturedCourses() {
                   </div>
                 </div>
 
-                <button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center group shadow-lg hover:shadow-xl">
-                  Enroll Now
+                <button
+                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center group shadow-lg hover:shadow-xl"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/courses/${course._id}`);
+                  }}
+                >
+                  View Course
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

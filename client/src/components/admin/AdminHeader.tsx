@@ -1,14 +1,14 @@
 "use client";
 
-import { Menu, Search } from "lucide-react";
+import { Menu, Search, Shield } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 import Image from "next/image";
 
-interface DashboardHeaderProps {
+interface AdminHeaderProps {
   onMenuClick: () => void;
 }
 
-export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
+export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const { data: user } = useUser();
 
   return (
@@ -33,22 +33,28 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             <Search className="h-4 w-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search courses, lessons..."
+              placeholder="Search courses, users, analytics..."
               className="bg-transparent border-none outline-none text-gray-300 placeholder-gray-400 flex-1"
             />
           </div>
         </div>
 
-        {/* Right side - Notifications and user */}
+        {/* Right side - Admin badge and user */}
         <div className="flex items-center space-x-4">
+          {/* Admin badge */}
+          <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border border-indigo-500/30 rounded-full">
+            <Shield className="h-4 w-4 text-indigo-400" />
+            <span className="text-sm font-medium text-indigo-400">Admin</span>
+          </div>
+
           {/* User avatar */}
           <div className="flex items-center space-x-3">
             {user?.avatar?.url ? (
               <Image
-                src={user.avatar.url}
-                alt={user.name}
                 width={100}
                 height={100}
+                src={user.avatar.url}
+                alt="user avatar"
                 className="w-10 h-10 rounded-full object-cover shadow-lg border border-indigo-500/30"
               />
             ) : (
@@ -60,6 +66,7 @@ export default function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             )}
             <div className="hidden sm:block">
               <p className="text-sm font-medium text-white">{user?.name}</p>
+              <p className="text-xs text-gray-400">Administrator</p>
             </div>
           </div>
         </div>

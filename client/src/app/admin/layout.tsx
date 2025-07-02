@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
-import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminHeader from "@/components/admin/AdminHeader";
 
-export default function DashboardLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -18,6 +18,8 @@ export default function DashboardLayout({
   useEffect(() => {
     if (!isLoading && !user) {
       router.push("/login");
+    } else if (!isLoading && user && user.role !== "admin") {
+      router.push("/dashboard");
     }
   }, [user, isLoading, router]);
 
@@ -43,6 +45,14 @@ export default function DashboardLayout({
     );
   }
 
+  if (user && user.role !== "admin") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
+        <span className="text-white text-lg">Access Denied</span>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex relative">
       {/* Background decorative elements */}
@@ -52,9 +62,9 @@ export default function DashboardLayout({
       <div className="absolute top-1/3 right-1/3 w-16 h-16 bg-blue-600/10 rounded-full blur-lg"></div>
       <div className="absolute bottom-1/3 left-1/3 w-12 h-12 bg-indigo-600/8 rounded-full blur-lg"></div>
 
-      <DashboardSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <AdminSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
       <div className="flex-1 lg:ml-72 flex flex-col relative z-10">
-        <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
+        <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 p-6">
           <div className="max-w-7xl mx-auto">{children}</div>
         </main>
