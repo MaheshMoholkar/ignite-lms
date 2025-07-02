@@ -12,6 +12,7 @@ const minioClient = new Client({
 const BUCKETS = {
   PROFILE_IMAGES: process.env.MINIO_PROFILE_BUCKET || "ignite-profile-images",
   COURSE_THUMBNAILS: process.env.MINIO_THUMBNAIL_BUCKET || "ignite-thumbnails",
+  COURSE_VIDEOS: process.env.MINIO_VIDEO_BUCKET || "ignite-course-videos",
   LAYOUT_BANNERS: process.env.MINIO_BANNER_BUCKET || "ignite-layout-banners",
 };
 
@@ -23,7 +24,17 @@ const ALLOWED_IMAGE_TYPES = [
   "image/webp",
 ];
 
-// Upload a file
+// Allowed video types
+const ALLOWED_VIDEO_TYPES = [
+  "video/mp4",
+  "video/webm",
+  "video/ogg",
+  "video/quicktime",
+  "video/x-msvideo",
+  "video/x-ms-wmv",
+];
+
+// Upload a file (image or video)
 async function uploadFile(
   file: Buffer,
   fileName: string,
@@ -31,11 +42,19 @@ async function uploadFile(
   bucketName: string
 ) {
   try {
-    // Validate file type
-    if (!ALLOWED_IMAGE_TYPES.includes(mimeType)) {
-      throw new Error(
-        "Invalid file type. Only JPEG, PNG, GIF and WebP images are allowed."
-      );
+    // Validate file type based on bucket
+    if (bucketName === BUCKETS.COURSE_VIDEOS) {
+      if (!ALLOWED_VIDEO_TYPES.includes(mimeType)) {
+        throw new Error(
+          "Invalid file type. Only MP4, WebM, OGG, MOV, AVI and WMV videos are allowed."
+        );
+      }
+    } else {
+      if (!ALLOWED_IMAGE_TYPES.includes(mimeType)) {
+        throw new Error(
+          "Invalid file type. Only JPEG, PNG, GIF and WebP images are allowed."
+        );
+      }
     }
 
     // Generate unique filename
@@ -67,4 +86,10 @@ async function deleteFile(fileName: string, bucketName: string) {
   }
 }
 
-export { uploadFile, deleteFile, BUCKETS };
+export {
+  uploadFile,
+  deleteFile,
+  BUCKETS,
+  ALLOWED_IMAGE_TYPES,
+  ALLOWED_VIDEO_TYPES,
+};

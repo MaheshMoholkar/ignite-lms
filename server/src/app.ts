@@ -9,6 +9,7 @@ import orderRouter from "./routes/order.route";
 import notificationRouter from "./routes/notification.route";
 import analyticsRouter from "./routes/analytics.route";
 import layoutRouter from "./routes/layout.route";
+import adminRouter from "./routes/admin.route";
 require("dotenv").config();
 
 // json parser
@@ -56,7 +57,8 @@ app.use(
   orderRouter,
   notificationRouter,
   analyticsRouter,
-  layoutRouter
+  layoutRouter,
+  adminRouter
 );
 
 // middleware
