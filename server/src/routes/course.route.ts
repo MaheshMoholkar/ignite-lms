@@ -8,13 +8,14 @@ import {
   getUserCourses,
   getSingleCourse,
   uploadCourse,
+  uploadCourseVideo,
   addReview,
   addReplytoReview,
   getAllCourses,
   deleteCourse,
 } from "../controllers/course.controller";
 import { isAuthenticated, authorizeRoles } from "../middlewares/auth";
-import upload from "../middlewares/upload";
+import upload, { uploadVideo } from "../middlewares/upload";
 
 const courseRouter = express.Router();
 
@@ -25,6 +26,15 @@ courseRouter.post(
   authorizeRoles("admin"),
   upload.single("thumbnail"),
   uploadCourse
+);
+
+// Upload course video (only admin)
+courseRouter.post(
+  "/upload-video",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  uploadVideo.single("video"),
+  uploadCourseVideo
 );
 
 courseRouter.put(
@@ -43,6 +53,12 @@ courseRouter.get(
   isAuthenticated,
   authorizeRoles("admin"),
   getAllCourses
+);
+courseRouter.get(
+  "/courses/:id",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  getSingleCourse
 );
 courseRouter.get("/get-course-content/:id", isAuthenticated, getCourseByUser);
 courseRouter.put("/add-question", isAuthenticated, addQuestion);
