@@ -7,37 +7,18 @@ export function middleware(request: NextRequest) {
   const activationEmail = request.cookies.get("activation_email")?.value;
   const { pathname } = request.nextUrl;
 
-  // Handle activation page access
-  if (pathname === "/activation") {
-    // If no activation token, redirect to register
-    if (!activationToken) {
-      return NextResponse.redirect(new URL("/register", request.url));
-    }
-
-    // If no activation email, redirect to register (incomplete activation flow)
-    if (!activationEmail) {
-      return NextResponse.redirect(new URL("/register", request.url));
-    }
-
-    // If user is already authenticated, redirect to home
-    if (accessToken) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    // Allow access to activation page
-    return NextResponse.next();
-  }
-
   // If user has activation token but is not on activation page, redirect to activation
   if (activationToken && activationEmail && pathname !== "/activation") {
     return NextResponse.redirect(new URL("/activation", request.url));
   }
 
-  // If user is authenticated and tries to access login/register, redirect to dashboard
+  // If user is authenticated and tries to access login/register, redirect based on role
   if (
     accessToken &&
     (pathname.startsWith("/login") || pathname.startsWith("/register"))
   ) {
+    // For now, redirect to dashboard. Role-based redirection will be handled in the login form
+    // since middleware doesn't have access to user data without making an API call
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
