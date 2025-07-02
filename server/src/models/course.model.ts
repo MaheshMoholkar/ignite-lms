@@ -14,20 +14,17 @@ interface IComment extends Document {
   questionReplies: IComment[];
 }
 
-interface ILink extends Document {
-  title: string;
-  url: string;
-}
-
 interface ICourseData extends Document {
   title: string;
   description: string;
-  videoUrl: string;
+  videoFile?: {
+    public_id: string;
+    url: string;
+  };
   videoThumbnail: object;
   videoSection: string;
   videoLength: number;
   videoPlayerUrl: string;
-  links: ILink[];
   suggestions: string[];
   questions: IComment[];
 }
@@ -74,15 +71,6 @@ const reviewSchema = new Schema<IReview>({
   commentReplies: [Object],
 });
 
-const linkSchema = new Schema<ILink>({
-  title: {
-    type: String,
-  },
-  url: {
-    type: String,
-  },
-});
-
 const commentSchema = new Schema<IComment>({
   user: Object,
   question: String,
@@ -90,13 +78,19 @@ const commentSchema = new Schema<IComment>({
 });
 
 const courseDataSchema = new Schema<ICourseData>({
-  videoUrl: String,
+  videoFile: {
+    public_id: {
+      type: String,
+    },
+    url: {
+      type: String,
+    },
+  },
   title: String,
   videoSection: String,
   description: String,
   videoLength: Number,
   videoPlayerUrl: String,
-  links: [linkSchema],
   suggestions: [String],
   questions: [commentSchema],
 });
