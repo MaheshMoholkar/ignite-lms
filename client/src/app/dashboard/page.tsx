@@ -3,22 +3,28 @@
 import { useUser } from "@/hooks/useUser";
 import { BookOpen, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
-  const { data: user } = useUser();
+  const { data: user, isLoading } = useUser();
   const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Redirect admin users to admin dashboard
   useEffect(() => {
     if (user && user.role === "admin") {
+      setIsRedirecting(true);
       router.replace("/admin");
     }
   }, [user, router]);
 
-  // Don't render anything while redirecting
-  if (user && user.role === "admin") {
-    return null;
+  // Show loading while user data is loading or while redirecting
+  if (isLoading || isRedirecting || (user && user.role === "admin")) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400"></div>
+      </div>
+    );
   }
 
   const stats = [

@@ -74,7 +74,7 @@ export default function DashboardSidebar({
 
         <div className="flex flex-col h-full relative z-10">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-700/50 bg-gray-800/30 backdrop-blur-sm">
+          <div className="relative flex items-center justify-center p-6 border-b border-gray-700/50 bg-gray-800/30 backdrop-blur-sm">
             <Link
               href="/dashboard"
               className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent hover:scale-105 transition-transform duration-200"
@@ -83,7 +83,7 @@ export default function DashboardSidebar({
             </Link>
             <button
               onClick={() => setOpen(false)}
-              className="lg:hidden p-2 rounded-xl bg-gray-700/50 hover:bg-gray-600/50 transition-all duration-200 hover:scale-105 border border-gray-600/50"
+              className="absolute right-4 lg:hidden p-2 rounded-xl bg-gray-700/50 hover:bg-gray-600/50 transition-all duration-200 hover:scale-105 border border-gray-600/50"
             >
               <X className="h-5 w-5 text-gray-300" />
             </button>

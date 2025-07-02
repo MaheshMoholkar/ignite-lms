@@ -5,15 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
-import {
-  X,
-  Home,
-  BookOpen,
-  Users,
-  BarChart3,
-  LogOut,
-  Shield,
-} from "lucide-react";
+import { X, Home, BookOpen, Users, BarChart3, LogOut } from "lucide-react";
 
 interface AdminSidebarProps {
   open: boolean;
@@ -70,17 +62,16 @@ export default function AdminSidebar({ open, setOpen }: AdminSidebarProps) {
 
         <div className="flex flex-col h-full relative z-10">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-700/50 bg-gray-800/30 backdrop-blur-sm">
+          <div className="relative flex items-center justify-center p-6 border-b border-gray-700/50 bg-gray-800/30 backdrop-blur-sm">
             <Link
               href="/admin"
-              className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent hover:scale-105 transition-transform duration-200 flex items-center space-x-2"
+              className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent hover:scale-105 transition-transform duration-200"
             >
-              <Shield className="h-6 w-6" />
-              <span>Admin Panel</span>
+              Ignite LMS
             </Link>
             <button
               onClick={() => setOpen(false)}
-              className="lg:hidden p-2 rounded-xl bg-gray-700/50 hover:bg-gray-600/50 transition-all duration-200 hover:scale-105 border border-gray-600/50"
+              className="absolute right-4 lg:hidden p-2 rounded-xl bg-gray-700/50 hover:bg-gray-600/50 transition-all duration-200 hover:scale-105 border border-gray-600/50"
             >
               <X className="h-5 w-5 text-gray-300" />
             </button>
